@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin Generator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="find-me" class="row">
+            <div class="col-md-6">
+                <div class="pin-generator half-width">
+                    <input id="pin-made" class="form-control" type="text">
+                    <button onclick="
+                    pinMaker()" class="generate-btn">Generate Pin</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-section half-width">
+                    <input id="released-pin" class="form-control" type="text">
+                    <div class="numbers">
+                        <div class="calc-body">
+                            <div class="calc-button-row">
+                              <div onclick="pinRelease(this)" class="button">7</div>
+                              <div onclick="pinRelease(this)" class="button">8</div>
+                              <div onclick="pinRelease(this)" class="button">9</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div onclick="pinRelease(this)" class="button">4</div>
+                              <div onclick="pinRelease(this)" class="button">5</div>
+                              <div onclick="pinRelease(this)" class="button">6</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div onclick="pinRelease(this)" class="button">1</div>
+                              <div onclick="pinRelease(this)" class="button">2</div>
+                              <div onclick="pinRelease(this)" class="button">3</div>
+                            </div>
+                            <div class="calc-button-row">
+                                <div id="exempt" class="button"><</div>
+                                <div onclick="pinRelease(this)" class="button">0</div>
+                                <div onclick="pinRelease(this)" class="button">C</div>
+                            </div>
+                            <div>
+                                <button onclick="checker()" type="submit" id="submit-btn">Submit</button>
+                                <p id="action-left"><span id="reducing">3</span> try left</p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="notify-section">
+            <p id="notify1">❌ Pin Didn't Match, Please try again</p>
+            <p id="notify2">✅ Pin Matched... Secret door is opening for you</p>
+        </div>
+    </div>
+
+    <script>
+        var pinMade = document.getElementById('pin-made');
+        // generating random number
+        function pinMaker(){
+            var pinProcessing = Math.random() * 10000;
+            var number4 = pinProcessing.toFixed(0);
+            if(number4 > 1000 && number4 < 10000){
+                pinMade.value = number4;
+            }
+        }
+
+        // for number pad
+        var pinReleased = document.getElementById('released-pin');
+        function pinRelease(obj){
+            var takingPin = obj.innerHTML;
+            if(takingPin == 'C'){
+                pinReleased.value = '';
+            }
+            else{
+                if(pinReleased.value == '0'){
+                    pinReleased.value = takingPin;
+                }
+                else{
+                    pinReleased.value += takingPin;
+                }
+            }
+        }
+
+        // for backspace 
+        document.getElementById('exempt').addEventListener('click' , function(){
+            var newPin = pinReleased.value + '';
+            var neWpin = newPin.slice(0,-1);
+            
+            if(neWpin.length > 0){
+                var reducedPin = parseInt(neWpin);
+                pinReleased.value = reducedPin;
+            }
+            else{
+                pinReleased.value = '';
+            }
+        })
+
+        // submit button 
+        function checker(){
+            document.getElementById('notify1').style.display = 'none';
+            document.getElementById('notify2').style.display = 'none';
+            if(pinMade.value == pinReleased.value){
+                document.getElementById('notify2').style.display = 'block';
+                document.getElementById('action-left').style.display = 'none';
+                document.getElementById('submit-btn').disabled = true;
+            }
+            else{
+                document.getElementById('notify1').style.display = 'block';
+                let count = document.getElementById('reducing').innerText;
+                let number = parseInt(count)-1;
+                if(number > 0){
+                document.getElementById('reducing').innerText= number;
+                }
+                else{
+                    document.getElementById('action-left').style.display = 'none';
+                    document.getElementById('submit-btn').disabled = true;
+                }
+            }
+            pinMade.value = '';
+            pinReleased.value = '';
+        }
+    </script>
+</body>
+</html>
